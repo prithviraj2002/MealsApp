@@ -3,8 +3,11 @@ import 'package:meals_app/widgets/main_drawer.dart';
 
 class FilterScreen extends StatefulWidget {
   static const routeName = '/filter-screen';
+  final Function saveFilters;
+  final Map<String, bool> filters;
 
-  const FilterScreen({Key? key}) : super(key: key);
+  const FilterScreen(this.filters, this.saveFilters, {Key? key})
+      : super(key: key);
 
   @override
   State<FilterScreen> createState() => _FilterScreenState();
@@ -17,16 +20,39 @@ class _FilterScreenState extends State<FilterScreen> {
   bool lactoseFree = false;
 
   @override
+  initState() {
+    GlutenFree = widget.filters['Gluten'] as bool;
+    isVegan = widget.filters['vegan'] as bool;
+    lactoseFree = widget.filters['lactose'] as bool;
+    vegetarian = widget.filters['vegetarian'] as bool;
+
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Your Settings!'),
+        actions: [
+          IconButton(
+              icon: Icon(Icons.save),
+              onPressed: () {
+                final selectedFilters = {
+                  'Gluten': GlutenFree,
+                  'vegan': isVegan,
+                  'lactose': lactoseFree,
+                  'vegetarian': vegetarian,
+                };
+                widget.saveFilters(selectedFilters);
+              })
+        ],
       ),
       body: Column(
         children: [
           Container(
             padding: EdgeInsets.all(20),
-            child: Text(
+            child: const Text(
               'Adjust your meal selections',
               style: TextStyle(fontSize: 22),
             ),
@@ -50,9 +76,9 @@ class _FilterScreenState extends State<FilterScreen> {
                   title: Text('Vegan Meals'),
                   value: isVegan,
                   onChanged: (bool newValue) {
-                  setState(() {
-                    isVegan = newValue;
-                  });
+                    setState(() {
+                      isVegan = newValue;
+                    });
                   },
                   subtitle: Text('Display only Vegan meals'),
                 ),

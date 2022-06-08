@@ -5,7 +5,8 @@ import 'package:meals_app/widgets/meal_item.dart';
 import '../model/meal.dart';
 
 class MealScreen extends StatefulWidget {
-  const MealScreen({Key? key}) : super(key: key);
+  const MealScreen(this.availableMeals, {Key? key}) : super(key: key);
+  final List<Meal> availableMeals;
 
   static const routeName = '/meal_screen';
 
@@ -39,7 +40,7 @@ class _MealScreenState extends State<MealScreen> {
         ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
     final categoryTitle = routeArgs['title'];
     final categoryId = routeArgs['id'];
-    displayedMeals = DUMMY_MEALS.where((meal) {
+    displayedMeals = widget.availableMeals.where((meal) {
       return meal.categories.contains(categoryId);
     }).toList();
     return Scaffold(
@@ -55,7 +56,6 @@ class _MealScreenState extends State<MealScreen> {
               duration: displayedMeals[index].duration,
               complexity: displayedMeals[index].complexity,
               affordability: displayedMeals[index].affordability,
-              removeItem: _removeMeal,
             );
           }),
           itemCount: displayedMeals.length,
